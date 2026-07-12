@@ -47,6 +47,8 @@
         <div class="actions"><button id="refreshButton" type="button">Atualizar</button><button class="ghost" id="clearButton" type="button">Limpar histórico</button></div>
       </div>
       <div class="orders" id="orders"></div>
+      <h2 style="margin:18px 0 10px;font-size:1.05rem">Histórico de entregues</h2>
+      <div class="orders" id="historyOrders"></div>
       <p class="note">Altere o status aqui para atualizar a tela de pedidos do cliente.</p>
     </section>
   </main>
@@ -83,6 +85,11 @@
     function statusOf(order){
       return ['Pedido recebido','Preparando','Saiu para entrega','Entregue'][order.step||0]||'Pedido recebido'
     }
+    function orderCard(o){
+      var items=(o.items||o.itens||[]).map(function(i){return '<li>'+i+'</li>'}).join('');
+      var code=o.code||o.id;
+      return '<article class="order"><div class="order-head"><div><h3>'+code+'</h3><p class="muted" style="margin:6px 0 0">'+(o.total||'')+' • '+(o.payment||o.pagamento||'')+'</p><p class="muted" style="margin:6px 0 0">'+(o.cliente||'')+' '+(o.telefone||'')+'</p></div><div><span class="status">'+statusOf(o)+'</span><select class="status-select" data-status-id="'+(o.id||'')+'" data-status-code="'+code+'"><option value="0" '+((o.step||0)===0?'selected':'')+'>Pedido recebido</option><option value="1" '+((o.step||0)===1?'selected':'')+'>Preparando</option><option value="2" '+((o.step||0)===2?'selected':'')+'>Saiu para entrega</option><option value="3" '+((o.step||0)===3?'selected':'')+'>Entregue</option></select></div></div><ul>'+items+'</ul></article>';
+    }
     async function updateStatus(id,code,step){
       if(supabaseConfig()){
         var filter=id?'?id=eq.'+encodeURIComponent(id):'?code=eq.'+encodeURIComponent(code);
@@ -96,12 +103,15 @@
     }
     async function render(){
       var orders=await readOrders();
-      var box=document.querySelector('#orders');
+      var box=document.querySelector('#orders'),historyBox=document.querySelector('#historyOrders');
+      var active=orders.filter(function(o){return (o.step||0)<3}),done=orders.filter(function(o){return (o.step||0)>=3});
       document.querySelector('#totalOrders').textContent=orders.length;
-      document.querySelector('#activeOrders').textContent=orders.filter(function(o){return (o.step||0)<3}).length;
-      document.querySelector('#doneOrders').textContent=orders.filter(function(o){return (o.step||0)>=3}).length;
+      document.querySelector('#activeOrders').textContent=active.length;
+      document.querySelector('#doneOrders').textContent=done.length;
       document.querySelector('#lastOrder').textContent=orders[0]?orders[0].code:'-';
-      if(!orders.length){box.innerHTML='<p class="empty">Nenhum pedido salvo ainda.</p>';return}
+      box.innerHTML=active.length?active.map(orderCard).join(''):'<p class="empty">Nenhum pedido ativo agora.</p>';
+      historyBox.innerHTML=done.length?done.map(orderCard).join(''):'<p class="empty">Nenhum pedido entregue ainda.</p>';
+      return;
       box.innerHTML=orders.map(function(o){
         var items=(o.items||o.itens||[]).map(function(i){return '<li>'+i+'</li>'}).join('');
         var code=o.code||o.id;
@@ -118,6 +128,7 @@
     document.querySelector('#logoutButton').addEventListener('click',function(){setLogged(false);showLogin()});
     document.querySelector('#refreshButton').addEventListener('click',render);
     document.querySelector('#orders').addEventListener('change',function(e){var s=e.target.closest('[data-status-code]');if(!s)return;updateStatus(s.dataset.statusId,s.dataset.statusCode,s.value)});
+    document.querySelector('#historyOrders').addEventListener('change',function(e){var s=e.target.closest('[data-status-code]');if(!s)return;updateStatus(s.dataset.statusId,s.dataset.statusCode,s.value)});
     document.querySelector('#clearButton').addEventListener('click',async function(){
       if(!confirm('Limpar histórico de pedidos deste navegador?'))return;
       if(supabaseConfig())await fetch(supabaseEndpoint('?id=not.is.null'),{method:'DELETE',headers:supabaseHeaders()});
