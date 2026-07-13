@@ -8,7 +8,7 @@
     :root{--ink:#15110f;--muted:#706861;--paper:#f7f1e8;--surface:#fffdf8;--line:#e4d8c8;--nori:#12231d;--lacquer:#b21f2d;--gold:#c99a3c;--shadow:0 22px 58px rgba(18,35,29,.16)}
     *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fbf6ed,var(--paper));color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}
     header{padding:22px 18px;background:linear-gradient(135deg,var(--nori),#1d382f);color:#fff}header>div,main{width:min(1100px,100%);margin:0 auto}a{color:inherit}.top{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px}.mark{width:46px;height:46px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,var(--lacquer),#68121a);color:#ffe6ad;font-weight:950}.back{border:1px solid rgba(255,255,255,.26);border-radius:8px;padding:10px 12px;text-decoration:none;background:rgba(255,255,255,.08);font-weight:850}h1{margin:0;font-size:1.45rem}p{line-height:1.45}.muted{color:var(--muted)}main{padding:22px 18px 80px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.metric,.panel,.order,.login-card{border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:var(--shadow)}.metric{padding:14px}.metric span{display:block;color:var(--muted);font-size:.84rem;font-weight:850}.metric strong{display:block;margin-top:6px;font-size:1.5rem}.panel{padding:16px}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.bar h2{margin:0;font-size:1.15rem}.actions{display:flex;gap:8px;flex-wrap:wrap}button{min-height:38px;border:0;border-radius:8px;padding:0 12px;background:var(--nori);color:#fff;font-weight:850}.ghost{background:#efe4d5;color:var(--ink)}.orders{display:grid;gap:10px}.order{padding:14px;box-shadow:none}.order-head{display:flex;align-items:start;justify-content:space-between;gap:12px}.order h3{margin:0;font-size:1rem}.status{border-radius:999px;padding:5px 9px;background:#f8e9c6;color:#7d4f10;font-size:.78rem;font-weight:950;white-space:nowrap}.order ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}.order li+li{margin-top:4px}.empty{margin:0;padding:18px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);background:#fffaf3}.note{margin:14px 0 0;color:var(--muted);font-size:.9rem}.hidden{display:none!important}
-    .login-wrap{min-height:calc(100vh - 96px);display:grid;place-items:center;padding:28px 18px}.login-card{width:min(430px,100%);padding:20px}.login-card h2{margin:0 0 8px}.login-card form{display:grid;gap:12px;margin-top:16px}.login-card label{display:grid;gap:6px;color:var(--muted);font-size:.9rem;font-weight:850}.login-card input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:8px;padding:0 12px;color:var(--ink);background:#fff}.error{min-height:20px;margin:0;color:var(--lacquer);font-weight:850}.session-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:rgba(255,255,255,.82);font-size:.9rem}.status-select{min-height:38px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#fff;color:var(--ink);font-weight:850}
+    .login-wrap{min-height:calc(100vh - 96px);display:grid;place-items:center;padding:28px 18px}.login-card{width:min(430px,100%);padding:20px}.login-card h2{margin:0 0 8px}.login-card form{display:grid;gap:12px;margin-top:16px}.login-card label{display:grid;gap:6px;color:var(--muted);font-size:.9rem;font-weight:850}.login-card input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:8px;padding:0 12px;color:var(--ink);background:#fff}.error{min-height:20px;margin:0;color:var(--lacquer);font-weight:850}.session-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:rgba(255,255,255,.82);font-size:.9rem}.status-select{min-height:38px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#fff;color:var(--ink);font-weight:850}.history-section{margin-top:18px}.history-toggle{width:100%;min-height:48px;border:1px solid var(--line);border-radius:8px;background:#fffaf3;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px;font-weight:950}.history-toggle span{display:flex;align-items:center;gap:8px}.history-toggle strong{min-width:28px;height:28px;border-radius:999px;display:grid;place-items:center;background:var(--nori);color:#fff;font-size:.82rem}.history-toggle em{font-style:normal;color:var(--muted);font-size:.82rem}.history-orders{margin-top:10px}.history-orders.collapsed{display:none}
     @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.top,.bar,.order-head{align-items:stretch;flex-direction:column}}@media(max-width:460px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
@@ -47,8 +47,10 @@
         <div class="actions"><button id="refreshButton" type="button">Atualizar</button><button class="ghost" id="clearButton" type="button">Limpar histórico</button></div>
       </div>
       <div class="orders" id="orders"></div>
-      <h2 style="margin:18px 0 10px;font-size:1.05rem">Histórico de entregues</h2>
-      <div class="orders" id="historyOrders"></div>
+      <div class="history-section" id="historyPanel">
+        <button class="history-toggle" id="historyToggle" type="button"><span>Histórico de entregues <em>Clique para abrir</em></span><strong id="historyCount">0</strong></button>
+        <div class="orders history-orders collapsed" id="historyOrders"></div>
+      </div>
       <p class="note">Altere o status aqui para atualizar a tela de pedidos do cliente.</p>
     </section>
   </main>
@@ -58,6 +60,7 @@
     var ADMIN_USER='administracao';
     var ADMIN_PASS='123456';
     var SESSION_KEY='kintsugiAdminLogged';
+    var historyOpen=false;
     function isLogged(){return sessionStorage.getItem(SESSION_KEY)==='true'}
     function setLogged(value){if(value)sessionStorage.setItem(SESSION_KEY,'true');else sessionStorage.removeItem(SESSION_KEY)}
     function showLogin(){
@@ -108,8 +111,10 @@
       document.querySelector('#totalOrders').textContent=orders.length;
       document.querySelector('#activeOrders').textContent=active.length;
       document.querySelector('#doneOrders').textContent=done.length;
+      document.querySelector('#historyCount').textContent=done.length;
       document.querySelector('#lastOrder').textContent=orders[0]?orders[0].code:'-';
       box.innerHTML=active.length?active.map(orderCard).join(''):'<p class="empty">Nenhum pedido ativo agora.</p>';
+      historyBox.classList.toggle('collapsed',!historyOpen);
       historyBox.innerHTML=done.length?done.map(orderCard).join(''):'<p class="empty">Nenhum pedido entregue ainda.</p>';
       return;
       box.innerHTML=orders.map(function(o){
@@ -129,6 +134,7 @@
     document.querySelector('#refreshButton').addEventListener('click',render);
     document.querySelector('#orders').addEventListener('change',function(e){var s=e.target.closest('[data-status-code]');if(!s)return;updateStatus(s.dataset.statusId,s.dataset.statusCode,s.value)});
     document.querySelector('#historyOrders').addEventListener('change',function(e){var s=e.target.closest('[data-status-code]');if(!s)return;updateStatus(s.dataset.statusId,s.dataset.statusCode,s.value)});
+    document.querySelector('#historyToggle').addEventListener('click',function(){historyOpen=!historyOpen;render()});
     document.querySelector('#clearButton').addEventListener('click',async function(){
       if(!confirm('Limpar histórico de pedidos deste navegador?'))return;
       if(supabaseConfig())await fetch(supabaseEndpoint('?id=not.is.null'),{method:'DELETE',headers:supabaseHeaders()});
