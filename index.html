@@ -47,7 +47,6 @@
       <p class="kicker">Sushi bar delivery</p>
       <h1>Kintsugi Sushi</h1>
       <p class="copyline">Combinados autorais, sushis prensados, temakis e pratos quentes preparados no tempo certo para chegar com textura, brilho e frescor.</p>
-      <div class="hero-actions"><button class="hero-cta" id="heroMenuButton" type="button">Ver cardápio</button><button class="hero-cta" id="heroCartButton" type="button">Pedir agora</button></div>
       <div class="contact-dock" aria-label="Atalhos do restaurante">
         <a class="contact-link is-disabled" href="#" data-missing-contact="Instagram ainda não cadastrado" aria-label="Instagram" title="Instagram a cadastrar">◎</a>
         <a class="contact-link" href="tel:+5569993456791" aria-label="Ligar para o restaurante" title="Telefone">☎</a>
@@ -211,8 +210,6 @@
     document.querySelector('#benefitOk').addEventListener('click',closeBenefits);
     document.querySelector('#benefitGate').addEventListener('click',function(e){if(e.target.id==='benefitGate')closeBenefits()});
     document.querySelectorAll('[data-missing-contact]').forEach(function(link){link.addEventListener('click',function(e){e.preventDefault();document.querySelector('#customerLine').textContent=link.dataset.missingContact})});
-    document.querySelector('#heroMenuButton').addEventListener('click',function(){showView('homeSection');document.querySelector('#homeSection').scrollIntoView({behavior:'smooth'})});
-    document.querySelector('#heroCartButton').addEventListener('click',function(){showView('cartSection');document.querySelector('#cartSection').scrollIntoView({behavior:'smooth'})});
     document.querySelectorAll('.bottom-nav button').forEach(function(b){b.addEventListener('click',function(){showView(b.dataset.view)})});
     document.querySelector('#tabs').addEventListener('click',function(e){var b=e.target.closest('[data-cat]');if(!b)return;st.cat=b.dataset.cat;renderTabs();renderProducts()});
     document.querySelector('#products').addEventListener('click',handleAddClick);document.querySelector('#offers').addEventListener('click',handleAddClick);
