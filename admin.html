@@ -6,7 +6,7 @@
   <title>Administração Kintsugi Sushi</title>
   <style>
     :root{--ink:#15110f;--muted:#706861;--paper:#f7f1e8;--surface:#fffdf8;--line:#e4d8c8;--nori:#12231d;--lacquer:#b21f2d;--gold:#c99a3c;--shadow:0 22px 58px rgba(18,35,29,.16)}
-    *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fbf6ed,var(--paper));color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fbf6ed,var(--paper));color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(201,154,60,.85);outline-offset:3px}
     header{padding:22px 18px;background:linear-gradient(135deg,var(--nori),#1d382f);color:#fff}header>div,main{width:min(1100px,100%);margin:0 auto}a{color:inherit}.top{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px}.mark{width:46px;height:46px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,var(--lacquer),#68121a);color:#ffe6ad;font-weight:950}.back{border:1px solid rgba(255,255,255,.26);border-radius:8px;padding:10px 12px;text-decoration:none;background:rgba(255,255,255,.08);font-weight:850}h1{margin:0;font-size:1.45rem}p{line-height:1.45}.muted{color:var(--muted)}main{padding:22px 18px 80px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.metric,.panel,.order,.login-card{border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:var(--shadow)}.metric{padding:14px}.metric span{display:block;color:var(--muted);font-size:.84rem;font-weight:850}.metric strong{display:block;margin-top:6px;font-size:1.5rem}.panel{padding:16px}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.bar h2{margin:0;font-size:1.15rem}.actions{display:flex;gap:8px;flex-wrap:wrap}button{min-height:38px;border:0;border-radius:8px;padding:0 12px;background:var(--nori);color:#fff;font-weight:850}.ghost{background:#efe4d5;color:var(--ink)}.orders{display:grid;gap:10px}.order{padding:14px;box-shadow:none}.order-head{display:flex;align-items:start;justify-content:space-between;gap:12px}.order h3{margin:0;font-size:1rem}.status{border-radius:999px;padding:5px 9px;background:#f8e9c6;color:#7d4f10;font-size:.78rem;font-weight:950;white-space:nowrap}.order ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}.order li+li{margin-top:4px}.empty{margin:0;padding:18px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);background:#fffaf3}.note{margin:14px 0 0;color:var(--muted);font-size:.9rem}.hidden{display:none!important}
     .login-wrap{min-height:calc(100vh - 96px);display:grid;place-items:center;padding:28px 18px}.login-card{width:min(430px,100%);padding:20px}.login-card h2{margin:0 0 8px}.login-card form{display:grid;gap:12px;margin-top:16px}.login-card label{display:grid;gap:6px;color:var(--muted);font-size:.9rem;font-weight:850}.login-card input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:8px;padding:0 12px;color:var(--ink);background:#fff}.error{min-height:20px;margin:0;color:var(--lacquer);font-weight:850}.session-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:rgba(255,255,255,.82);font-size:.9rem}.status-select{min-height:38px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#fff;color:var(--ink);font-weight:850}.history-section{margin-top:18px}.history-toggle{width:100%;min-height:48px;border:1px solid var(--line);border-radius:8px;background:#fffaf3;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px;font-weight:950}.history-toggle span{display:flex;align-items:center;gap:8px}.history-toggle strong{min-width:28px;height:28px;border-radius:999px;display:grid;place-items:center;background:var(--nori);color:#fff;font-size:.82rem}.history-toggle em{font-style:normal;color:var(--muted);font-size:.82rem}.history-orders{margin-top:10px}.history-orders.collapsed{display:none}
     @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.top,.bar,.order-head{align-items:stretch;flex-direction:column}}@media(max-width:460px){.grid{grid-template-columns:1fr}}
@@ -15,7 +15,7 @@
 <body>
   <header>
     <div class="top">
-      <div class="brand"><div class="mark">金</div><div><h1>Administração Kintsugi</h1><p style="margin:4px 0 0;color:rgba(255,255,255,.78)">Pedidos de teste e acompanhamento local</p></div></div>
+      <div class="brand"><div class="mark">金</div><div><h1>Administração Kintsugi</h1><p style="margin:4px 0 0;color:rgba(255,255,255,.78)">Pedidos e status do restaurante</p></div></div>
       <div class="session-line"><span id="sessionStatus">Acesso bloqueado</span><button class="ghost hidden" id="logoutButton" type="button">Sair</button><a class="back" href="index.html">Voltar ao cardápio</a></div>
     </div>
   </header>
@@ -23,14 +23,14 @@
   <section class="login-wrap" id="loginView">
     <div class="login-card">
       <h2>Entrar na administração</h2>
-      <p class="muted" style="margin:0">Use o acesso do restaurante para ver os pedidos deste navegador.</p>
+      <p class="muted" style="margin:0">Entre com uma conta autorizada como administradora no Supabase.</p>
       <form id="loginForm" autocomplete="off">
-        <label>Usuário<input id="adminUser" autocomplete="username" placeholder="Usuário"></label>
+        <label>E-mail<input id="adminUser" type="email" autocomplete="username" placeholder="admin@restaurante.com"></label>
         <label>Senha<input id="adminPass" type="password" autocomplete="current-password" placeholder="Senha"></label>
-        <button type="submit">Entrar</button>
+        <button type="submit" id="adminLoginButton">Entrar</button>
         <p class="error" id="loginError"></p>
       </form>
-      <p class="note">Login local para site estático. Para segurança real em produção, use proteção por senha do Netlify, Netlify Identity ou backend.</p>
+      <p class="note">O acesso depende da tabela <strong>admin_users</strong>. Sem permissão administrativa, os pedidos não são exibidos.</p>
     </div>
   </section>
 
@@ -51,98 +51,37 @@
         <button class="history-toggle" id="historyToggle" type="button"><span>Histórico de entregues <em>Clique para abrir</em></span><strong id="historyCount">0</strong></button>
         <div class="orders history-orders collapsed" id="historyOrders"></div>
       </div>
-      <p class="note">Altere o status aqui para atualizar a tela de pedidos do cliente.</p>
+      <p class="note">Somente administradores autorizados conseguem visualizar e alterar pedidos.</p>
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script>
-    var ADMIN_USER='administracao';
-    var ADMIN_PASS='123456';
-    var SESSION_KEY='kintsugiAdminLogged';
-    var historyOpen=false;
-    function isLogged(){return sessionStorage.getItem(SESSION_KEY)==='true'}
-    function setLogged(value){if(value)sessionStorage.setItem(SESSION_KEY,'true');else sessionStorage.removeItem(SESSION_KEY)}
-    function showLogin(){
-      document.querySelector('#loginView').classList.remove('hidden');
-      document.querySelector('#adminView').classList.add('hidden');
-      document.querySelector('#logoutButton').classList.add('hidden');
-      document.querySelector('#sessionStatus').textContent='Acesso bloqueado';
-    }
-    function showAdmin(){
-      document.querySelector('#loginView').classList.add('hidden');
-      document.querySelector('#adminView').classList.remove('hidden');
-      document.querySelector('#logoutButton').classList.remove('hidden');
-      document.querySelector('#sessionStatus').textContent='Sessão ativa';
-      render();
-    }
+    var historyOpen=false,adminSession=null,adminUser=null,supabaseClient=null;
     function supabaseConfig(){var c=window.KINTSUGI_SUPABASE||{};return c.url&&c.anonKey?c:null}
+    function getSupabase(){var c=supabaseConfig();if(!c||!window.supabase)return null;if(!supabaseClient)supabaseClient=window.supabase.createClient(c.url,c.anonKey);return supabaseClient}
     function supabaseEndpoint(path){var c=supabaseConfig();if(!c)return'';return c.url.replace(/\/$/,'')+'/rest/v1/'+(c.table||'pedidos')+path}
-    function supabaseHeaders(extra){var c=supabaseConfig(),h={'apikey':c.anonKey,'Authorization':'Bearer '+c.anonKey,'Content-Type':'application/json'};Object.keys(extra||{}).forEach(function(k){h[k]=extra[k]});return h}
-    async function readOrders(){
-      if(supabaseConfig()){
-        try{var response=await fetch(supabaseEndpoint('?select=*&order=created_at.desc'),{headers:supabaseHeaders()});var data=await response.json();if(Array.isArray(data))return data}catch(error){}
-      }
-      try{return JSON.parse(localStorage.getItem('kintsugiOrders')||'[]')||[]}catch(error){return []}
-    }
-    function statusOf(order){
-      return ['Pedido recebido','Preparando','Saiu para entrega','Entregue'][order.step||0]||'Pedido recebido'
-    }
-    function orderCard(o){
-      var items=(o.items||o.itens||[]).map(function(i){return '<li>'+i+'</li>'}).join('');
-      var code=o.code||o.id;
-      return '<article class="order"><div class="order-head"><div><h3>'+code+'</h3><p class="muted" style="margin:6px 0 0">'+(o.total||'')+' • '+(o.payment||o.pagamento||'')+'</p><p class="muted" style="margin:6px 0 0">'+(o.cliente||'')+' '+(o.telefone||'')+'</p></div><div><span class="status">'+statusOf(o)+'</span><select class="status-select" data-status-id="'+(o.id||'')+'" data-status-code="'+code+'"><option value="0" '+((o.step||0)===0?'selected':'')+'>Pedido recebido</option><option value="1" '+((o.step||0)===1?'selected':'')+'>Preparando</option><option value="2" '+((o.step||0)===2?'selected':'')+'>Saiu para entrega</option><option value="3" '+((o.step||0)===3?'selected':'')+'>Entregue</option></select></div></div><ul>'+items+'</ul></article>';
-    }
-    async function updateStatus(id,code,step){
-      if(supabaseConfig()){
-        var filter=id?'?id=eq.'+encodeURIComponent(id):'?code=eq.'+encodeURIComponent(code);
-        await fetch(supabaseEndpoint(filter),{method:'PATCH',headers:supabaseHeaders(),body:JSON.stringify({step:Number(step)})});
-      }else{
-        var orders=await readOrders();
-        orders=orders.map(function(order){if(order.code===code){order.step=Number(step)}return order});
-        localStorage.setItem('kintsugiOrders',JSON.stringify(orders));
-      }
-      render();
-    }
-    async function render(){
-      var orders=await readOrders();
-      var box=document.querySelector('#orders'),historyBox=document.querySelector('#historyOrders');
-      var active=orders.filter(function(o){return (o.step||0)<3}),done=orders.filter(function(o){return (o.step||0)>=3});
-      document.querySelector('#totalOrders').textContent=orders.length;
-      document.querySelector('#activeOrders').textContent=active.length;
-      document.querySelector('#doneOrders').textContent=done.length;
-      document.querySelector('#historyCount').textContent=done.length;
-      document.querySelector('#lastOrder').textContent=orders[0]?orders[0].code:'-';
-      box.innerHTML=active.length?active.map(orderCard).join(''):'<p class="empty">Nenhum pedido ativo agora.</p>';
-      historyBox.classList.toggle('collapsed',!historyOpen);
-      historyBox.innerHTML=done.length?done.map(orderCard).join(''):'<p class="empty">Nenhum pedido entregue ainda.</p>';
-      return;
-      box.innerHTML=orders.map(function(o){
-        var items=(o.items||o.itens||[]).map(function(i){return '<li>'+i+'</li>'}).join('');
-        var code=o.code||o.id;
-        return '<article class="order"><div class="order-head"><div><h3>'+code+'</h3><p class="muted" style="margin:6px 0 0">'+(o.total||'')+' • '+(o.payment||o.pagamento||'')+'</p><p class="muted" style="margin:6px 0 0">'+(o.cliente||'')+' '+(o.telefone||'')+'</p></div><div><span class="status">'+statusOf(o)+'</span><select class="status-select" data-status-id="'+(o.id||'')+'" data-status-code="'+code+'"><option value="0" '+((o.step||0)===0?'selected':'')+'>Pedido recebido</option><option value="1" '+((o.step||0)===1?'selected':'')+'>Preparando</option><option value="2" '+((o.step||0)===2?'selected':'')+'>Saiu para entrega</option><option value="3" '+((o.step||0)===3?'selected':'')+'>Entregue</option></select></div></div><ul>'+items+'</ul></article>';
-      }).join('');
-    }
-    document.querySelector('#loginForm').addEventListener('submit',function(e){
-      e.preventDefault();
-      var user=document.querySelector('#adminUser').value.trim();
-      var pass=document.querySelector('#adminPass').value;
-      if(user===ADMIN_USER&&pass===ADMIN_PASS){setLogged(true);document.querySelector('#loginError').textContent='';showAdmin();return}
-      document.querySelector('#loginError').textContent='Usuário ou senha incorretos.';
-    });
-    document.querySelector('#logoutButton').addEventListener('click',function(){setLogged(false);showLogin()});
+    function supabaseHeaders(extra){var c=supabaseConfig(),token=adminSession&&adminSession.access_token?adminSession.access_token:c.anonKey,h={'apikey':c.anonKey,'Authorization':'Bearer '+token,'Content-Type':'application/json'};Object.keys(extra||{}).forEach(function(k){h[k]=extra[k]});return h}
+    function showLogin(){document.querySelector('#loginView').classList.remove('hidden');document.querySelector('#adminView').classList.add('hidden');document.querySelector('#logoutButton').classList.add('hidden');document.querySelector('#sessionStatus').textContent='Acesso bloqueado'}
+    function showAdmin(){document.querySelector('#loginView').classList.add('hidden');document.querySelector('#adminView').classList.remove('hidden');document.querySelector('#logoutButton').classList.remove('hidden');document.querySelector('#sessionStatus').textContent='Sessão ativa';render()}
+    async function verifyAdmin(){if(!adminUser||!supabaseConfig())return false;try{var url=supabaseConfig().url.replace(/\/$/,'')+'/rest/v1/admin_users?select=role&user_id=eq.'+encodeURIComponent(adminUser.id);var response=await fetch(url,{headers:supabaseHeaders()});var data=await response.json();return Array.isArray(data)&&data.some(function(row){return row.role==='admin'})}catch(error){return false}}
+    async function readOrders(){if(!supabaseConfig()||!adminSession)return [];try{var response=await fetch(supabaseEndpoint('?select=*&order=created_at.desc'),{headers:supabaseHeaders()});var data=await response.json();if(Array.isArray(data))return data}catch(error){}return []}
+    function orderStatus(order){return order.status||['aguardando_envio_whatsapp','em_preparo','saiu_para_entrega','entregue'][order.step||0]||'aguardando_envio_whatsapp'}
+    function statusOf(order){return ({aguardando_envio_whatsapp:'Aguardando envio no WhatsApp',aguardando_confirmacao:'Aguardando confirmação',confirmado:'Confirmado',em_preparo:'Em preparo',saiu_para_entrega:'Saiu para entrega',entregue:'Entregue',cancelado:'Cancelado'})[orderStatus(order)]||'Aguardando confirmação'}
+    function statusToStep(status){return ({aguardando_envio_whatsapp:0,aguardando_confirmacao:0,confirmado:0,em_preparo:1,saiu_para_entrega:2,entregue:3,cancelado:3})[status]||0}
+    function orderCard(o){var items=(o.items||o.itens||[]).map(function(i){return '<li>'+i+'</li>'}).join(''),code=o.code||o.id,status=orderStatus(o);return '<article class="order"><div class="order-head"><div><h3>'+code+'</h3><p class="muted" style="margin:6px 0 0">'+(o.total||'')+' • '+(o.payment||o.pagamento||'')+'</p><p class="muted" style="margin:6px 0 0">'+(o.cliente||'')+' '+(o.telefone||'')+'</p></div><div><span class="status">'+statusOf(o)+'</span><select class="status-select" data-status-id="'+(o.id||'')+'" data-status-code="'+code+'"><option value="aguardando_envio_whatsapp" '+(status==='aguardando_envio_whatsapp'?'selected':'')+'>Aguardando envio WhatsApp</option><option value="aguardando_confirmacao" '+(status==='aguardando_confirmacao'?'selected':'')+'>Aguardando confirmação</option><option value="confirmado" '+(status==='confirmado'?'selected':'')+'>Confirmado</option><option value="em_preparo" '+(status==='em_preparo'?'selected':'')+'>Em preparo</option><option value="saiu_para_entrega" '+(status==='saiu_para_entrega'?'selected':'')+'>Saiu para entrega</option><option value="entregue" '+(status==='entregue'?'selected':'')+'>Entregue</option><option value="cancelado" '+(status==='cancelado'?'selected':'')+'>Cancelado</option></select></div></div><ul>'+items+'</ul></article>'}
+    async function updateStatus(id,code,status){if(!adminSession)return;var filter=id?'?id=eq.'+encodeURIComponent(id):'?code=eq.'+encodeURIComponent(code);await fetch(supabaseEndpoint(filter),{method:'PATCH',headers:supabaseHeaders(),body:JSON.stringify({status:status,step:statusToStep(status)})});render()}
+    async function render(){var orders=await readOrders(),box=document.querySelector('#orders'),historyBox=document.querySelector('#historyOrders'),active=orders.filter(function(o){return ['entregue','cancelado'].indexOf(orderStatus(o))===-1}),done=orders.filter(function(o){return ['entregue','cancelado'].indexOf(orderStatus(o))>-1});document.querySelector('#totalOrders').textContent=orders.length;document.querySelector('#activeOrders').textContent=active.length;document.querySelector('#doneOrders').textContent=done.length;document.querySelector('#historyCount').textContent=done.length;document.querySelector('#lastOrder').textContent=orders[0]?orders[0].code:'-';box.innerHTML=active.length?active.map(orderCard).join(''):'<p class="empty">Nenhum pedido ativo agora.</p>';historyBox.classList.toggle('collapsed',!historyOpen);historyBox.innerHTML=done.length?done.map(orderCard).join(''):'<p class="empty">Nenhum pedido entregue ainda.</p>'}
+    document.querySelector('#loginForm').addEventListener('submit',async function(e){e.preventDefault();var client=getSupabase(),errorBox=document.querySelector('#loginError'),button=document.querySelector('#adminLoginButton');if(!client){errorBox.textContent='Configure o Supabase antes de acessar a administração.';return}button.disabled=true;button.textContent='Entrando...';errorBox.textContent='';try{var result=await client.auth.signInWithPassword({email:document.querySelector('#adminUser').value.trim(),password:document.querySelector('#adminPass').value});if(result.error){errorBox.textContent='E-mail ou senha incorretos.';return}adminSession=result.data.session;adminUser=result.data.user;if(await verifyAdmin()){showAdmin();return}await client.auth.signOut();adminSession=null;adminUser=null;errorBox.textContent='Esta conta não tem permissão administrativa.';showLogin()}finally{button.disabled=false;button.textContent='Entrar'}});
+    document.querySelector('#logoutButton').addEventListener('click',async function(){var client=getSupabase();if(client)await client.auth.signOut();adminSession=null;adminUser=null;showLogin()});
     document.querySelector('#refreshButton').addEventListener('click',render);
     document.querySelector('#orders').addEventListener('change',function(e){var s=e.target.closest('[data-status-code]');if(!s)return;updateStatus(s.dataset.statusId,s.dataset.statusCode,s.value)});
     document.querySelector('#historyOrders').addEventListener('change',function(e){var s=e.target.closest('[data-status-code]');if(!s)return;updateStatus(s.dataset.statusId,s.dataset.statusCode,s.value)});
     document.querySelector('#historyToggle').addEventListener('click',function(){historyOpen=!historyOpen;render()});
-    document.querySelector('#clearButton').addEventListener('click',async function(){
-      if(!confirm('Limpar histórico de pedidos deste navegador?'))return;
-      if(supabaseConfig())await fetch(supabaseEndpoint('?id=not.is.null'),{method:'DELETE',headers:supabaseHeaders()});
-      localStorage.removeItem('kintsugiOrders');
-      localStorage.removeItem('kintsugiLastOrder');
-      render();
-    });
-    if(isLogged())showAdmin();else showLogin();
+    document.querySelector('#clearButton').addEventListener('click',async function(){if(!confirm('Limpar histórico de pedidos entregues/cancelados?'))return;if(adminSession)await fetch(supabaseEndpoint('?or=(status.eq.entregue,status.eq.cancelado)'),{method:'DELETE',headers:supabaseHeaders()});render()});
+    async function initAdmin(){var client=getSupabase();if(!client){showLogin();document.querySelector('#loginError').textContent='Configure o Supabase para usar a administração.';return}var result=await client.auth.getSession();adminSession=result.data.session||null;adminUser=adminSession?adminSession.user:null;if(adminSession&&await verifyAdmin())showAdmin();else showLogin()}
+    initAdmin();
   </script>
 </body>
 </html>
