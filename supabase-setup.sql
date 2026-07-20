@@ -24,6 +24,22 @@ alter table public.pedidos add column if not exists observacoes text;
 create index if not exists pedidos_user_id_idx on public.pedidos(user_id);
 create index if not exists pedidos_status_idx on public.pedidos(status);
 
+create table if not exists public.loyalty_events (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  order_id uuid references public.pedidos(id) on delete set null,
+  order_code text,
+  type text not null check (type in ('purchase','reward_redeemed','adjustment','reversal')),
+  purchase_value numeric not null default 0,
+  discount_value numeric not null default 0,
+  reason text,
+  created_at timestamptz not null default now(),
+  unique (order_id, type)
+);
+
+create index if not exists loyalty_events_user_id_idx on public.loyalty_events(user_id);
+create index if not exists loyalty_events_order_id_idx on public.loyalty_events(order_id);
+
 create table if not exists public.admin_users (
   user_id uuid primary key references auth.users(id) on delete cascade,
   role text not null default 'admin',
@@ -109,6 +125,7 @@ as $$
 $$;
 
 alter table public.pedidos enable row level security;
+alter table public.loyalty_events enable row level security;
 
 drop policy if exists "Admins podem ver perfil administrativo" on public.admin_users;
 create policy "Admins podem ver perfil administrativo"
@@ -184,3 +201,16 @@ create policy "Administracao pode limpar pedidos"
 on public.pedidos for delete
 to authenticated
 using (public.is_admin());
+
+drop policy if exists "Clientes veem propria fidelidade" on public.loyalty_events;
+create policy "Clientes veem propria fidelidade"
+on public.loyalty_events for select
+to authenticated
+using (user_id = auth.uid() or public.is_admin());
+
+drop policy if exists "Administracao gerencia fidelidade" on public.loyalty_events;
+create policy "Administracao gerencia fidelidade"
+on public.loyalty_events for all
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
