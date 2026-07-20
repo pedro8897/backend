@@ -12,6 +12,7 @@ create table if not exists public.pedidos (
   status text not null default 'aguardando_envio_whatsapp',
   desconto text,
   observacoes text,
+  archived_at timestamptz,
   created_at timestamptz not null default now()
 );
 
@@ -20,9 +21,11 @@ add column if not exists user_id uuid references auth.users(id);
 alter table public.pedidos add column if not exists status text not null default 'aguardando_envio_whatsapp';
 alter table public.pedidos add column if not exists desconto text;
 alter table public.pedidos add column if not exists observacoes text;
+alter table public.pedidos add column if not exists archived_at timestamptz;
 
 create index if not exists pedidos_user_id_idx on public.pedidos(user_id);
 create index if not exists pedidos_status_idx on public.pedidos(status);
+create index if not exists pedidos_archived_at_idx on public.pedidos(archived_at);
 
 create table if not exists public.loyalty_events (
   id uuid primary key default gen_random_uuid(),
@@ -123,6 +126,98 @@ as $$
       and role = 'admin'
   );
 $$;
+
+create or replace function public.calcular_pedido(
+  cart_items jsonb,
+  service_type text default 'delivery',
+  loyalty_discount numeric default 0
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+declare
+  item jsonb;
+  addon jsonb;
+  product_row public.produtos%rowtype;
+  unit_price numeric;
+  addon_total numeric;
+  line_total numeric;
+  subtotal numeric := 0;
+  delivery_fee numeric := 0;
+  discount_value numeric := greatest(0, coalesce(loyalty_discount, 0));
+  qty integer;
+  now_ts timestamptz := now();
+begin
+  if jsonb_typeof(cart_items) <> 'array' then
+    raise exception 'Carrinho inválido';
+  end if;
+
+  for item in select * from jsonb_array_elements(cart_items)
+  loop
+    qty := greatest(1, coalesce((item->>'q')::integer, 1));
+
+    select *
+      into product_row
+      from public.produtos
+      where id = (item->>'id')::uuid
+        and disponivel = true
+        and esgotado = false;
+
+    if not found then
+      raise exception 'Produto indisponível';
+    end if;
+
+    unit_price := product_row.preco_normal;
+    if product_row.promocao_ativa
+      and product_row.preco_promocional is not null
+      and product_row.preco_promocional > 0
+      and product_row.preco_promocional < product_row.preco_normal
+      and (product_row.promocao_inicio is null or product_row.promocao_inicio <= now_ts)
+      and (product_row.promocao_fim is null or product_row.promocao_fim >= now_ts)
+    then
+      unit_price := product_row.preco_promocional;
+    end if;
+
+    addon_total := 0;
+    if jsonb_typeof(item->'addons') = 'array' then
+      for addon in select * from jsonb_array_elements(item->'addons')
+      loop
+        addon_total := addon_total + (
+          coalesce((
+            select (a->>'preco')::numeric
+            from jsonb_array_elements(product_row.adicionais) a
+            where coalesce(a->>'nome', a->>'name') = (addon->>'name')
+            limit 1
+          ), 0) * greatest(1, coalesce((addon->>'q')::integer, 1))
+        );
+      end loop;
+    end if;
+
+    line_total := (unit_price + addon_total) * qty;
+    subtotal := subtotal + line_total;
+  end loop;
+
+  if service_type = 'delivery' and subtotal > 0 then
+    delivery_fee := 8.99;
+  end if;
+
+  if subtotal < 80 then
+    discount_value := 0;
+  end if;
+
+  return jsonb_build_object(
+    'subtotal', round(subtotal, 2),
+    'delivery', round(delivery_fee, 2),
+    'discount', round(least(discount_value, subtotal + delivery_fee), 2),
+    'total', round(greatest(0, subtotal + delivery_fee - discount_value), 2)
+  );
+end;
+$$;
+
+grant execute on function public.calcular_pedido(jsonb, text, numeric) to anon, authenticated;
 
 alter table public.pedidos enable row level security;
 alter table public.loyalty_events enable row level security;
